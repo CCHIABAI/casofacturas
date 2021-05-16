@@ -55,13 +55,12 @@ public class Factura {
     {
         impuestos.clear();
         // Cabecera --------------------------------------------
-        String result = "Descripcion                   Cant. x     Precio =        SubTotal\n\n";
+        String result = "Descripcion                   Cant. X     Precio =        SubTotal\n";
         Double subTotal = 0.0;
 
         for (Iterator<FacturaDetalle> iterator = detalle.iterator(); iterator.hasNext();)
           {
             FacturaDetalle next = iterator.next();
-            subTotal += next.getTotalImpuesto();
 
             // Armar linea detalle -------------------------
             result += String.format("%-27s", next.getArticulo().getDescripcion());
@@ -74,6 +73,7 @@ public class Factura {
             result += String.format(" --> %-8s", next.getArticulo().getClase());
             result += "\n";
             // ---------------------------------------------
+            subTotal += next.getTotal();
 
             // Cargar impuesto para la clkase de articulo ........
             addImpuesto(next);
@@ -85,15 +85,21 @@ public class Factura {
         if (impuestos.size() > 0)
           {
             result += "\n -= Impuestos =-------------------------\n";
-            result += "Producto     Impuesto             SubTotal\n";
+            result += "        Producto  Impuesto     Total con impuesto\n";
+            Double subTotalImpuesto = 0.0;
 
             for (Iterator<FacturaImpuestos> iterator = impuestos.iterator(); iterator.hasNext();)
               {
                 FacturaImpuestos next = iterator.next();
-                result += String.format("%-12s", next.getClase()) + "(" + next.getCantidad() + ")   ";
+                result += String.format("(%5d) ", next.getCantidad());
+                result += String.format("%-12s", next.getClase());
                 result += String.format("%3.2f", next.getImpuesto()) + "% ";
                 result += String.format("%20.2f", next.getTotal()) + "\n";
+                
+                subTotalImpuesto += next.getTotal();
               }
+            
+            result += "\nTOTAL ----> " + String.format("%20.2f", subTotalImpuesto);
           }
 
         if (detalle.size() == 0)
@@ -106,16 +112,13 @@ public class Factura {
     private void addImpuesto(FacturaDetalle detalle)
     {
         Boolean found = false;
-        Articulo articulo = detalle.getArticulo();
         
         for (Iterator<FacturaImpuestos> iterator = impuestos.iterator(); iterator.hasNext();)
           {
             FacturaImpuestos next = iterator.next();
-            //System.out.println(next.getClaseProducto() + "=" + articulo.getClaseProducto() +"-"+ articulo.getCodigo()+"-" + articulo.getDescription() );
             
             if (next.getClase().equals(detalle.getArticulo().getClase()))
               {
-                System.out.println("inc" + impuestos.size() + "··" + next.getClase() + " // " + articulo.getDescripcion());
                 next.incTotal(detalle.getTotalImpuesto(), detalle.getCantidad() );
                 found = true;
               }
@@ -123,7 +126,6 @@ public class Factura {
 
         if (!found)
           {
-             System.out.println("add" + impuestos.size() + "··" + articulo.getClase() + " // " + articulo.getDescripcion()); 
              impuestos.add( new FacturaImpuestos(detalle.getArticulo().getClase(), 
                                                  detalle.getArticulo().getImpuesto(), 
                                                  detalle.getArticulo().getPrecioImpuesto()));

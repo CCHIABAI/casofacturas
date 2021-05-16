@@ -32,16 +32,16 @@ public class Main
         factura.add(new Bebida("Vino4", 200.0));
         factura.add(new Bebida("Vino4", 200.0));
 
-        factura.add(new Bebida( "Vino", 200.0));
-        factura.add(new Bebida( "Vino", 200.0));
-        factura.add(new Bebida( "Vino", 200.0));
-        factura.add(new Bebida( "Vino", 200.0));
-        factura.add(new Bebida( "Vino", 200.0));
-        factura.add(new Bebida( "Vino", 200.0));
+        factura.add(new Bebida("Vino", 200.0));
+        factura.add(new Bebida("Vino", 200.0));
+        factura.add(new Bebida("Vino", 200.0));
+        factura.add(new Bebida("Vino", 200.0));
+        factura.add(new Bebida("Vino", 200.0));
+        factura.add(new Bebida("Vino", 200.0));
         
         factura.add(new Bebida("Vino blanco", 210.0));
-        factura.add(new Perfume("Chanel", 500.0));
-        factura.add(new Perfume("Calvin Klein", 350.0));
+        factura.add(new Perfume("Perfume Chanel", 500.0));
+        factura.add(new Perfume("Perfume Calvin Klein", 350.0));
         factura.add(new Bebida("Gaseosa", 100.0));
         factura.add(new Articulo("Torta", 450.0)); 
         
