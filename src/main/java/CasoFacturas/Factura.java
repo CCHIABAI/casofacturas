@@ -16,8 +16,8 @@ import java.util.Iterator;
  */
 public class Factura {
 
-    private ArrayList<FacturaDetalle> detalle;
-    private ArrayList<FacturaImpuestos> impuestos;
+    private ArrayList<FacturaDetalle> detalle; // Listado de articulos y sus cantidades por linea
+    private ArrayList<FacturaImpuestos> impuestos; // Impuestos agregados por clase de producto.
     
     // CONSTRUCTOR ===============================
     public Factura()
@@ -31,7 +31,6 @@ public class Factura {
     {
         Boolean found = false;
 
-        // Articulos -----------------------------
         // Buscar si esta ingresado 
         for (Iterator<FacturaDetalle> iterator = detalle.iterator(); iterator.hasNext();)
           {
@@ -39,28 +38,28 @@ public class Factura {
             
             if ((next.getArticulo().getDescripcion().equals(articulo.getDescripcion())) && !found)
               {
-                next.incCantidad();
+                next.incCantidad(); // Incrementar en uno la cantidad de la linea.
                 found = true;
               }
           }
         
-        // Si no esta ingresado, agregar
+        // Si no esta ingresado, agregar la linea de detalle correspondiente
         if (!found) detalle.add(new FacturaDetalle(articulo));
     }
-
-    
     
     // SALIDA =================================================================
     public String toString()
     {
-        impuestos.clear();
+        impuestos.clear(); // Limpiar las lineas de impuestos
         // Cabecera --------------------------------------------
         String result = "Descripcion                   Cant. X     Precio =        SubTotal\n";
         Double subTotal = 0.0;
 
+        // Recorrer el listado de detalle de articulos ------------------------
         for (Iterator<FacturaDetalle> iterator = detalle.iterator(); iterator.hasNext();)
           {
             FacturaDetalle next = iterator.next();
+            subTotal += next.getTotal();
 
             // Armar linea detalle -------------------------
             result += String.format("%-27s", next.getArticulo().getDescripcion());
@@ -73,17 +72,16 @@ public class Factura {
             result += String.format(" --> %-8s", next.getArticulo().getClase());
             result += "\n";
             // ---------------------------------------------
-            subTotal += next.getTotal();
 
-            // Cargar impuesto para la clkase de articulo ........
-            addImpuesto(next);
+            addImpuesto(next); // Cargar impuesto para la clase de articulo 
           }
         
         result += String.format("%66.2f SubTotal", subTotal);
 
-        // Mostrar lineas impuestos -----------------------------------------
+        // Mostrar lineas impuestos ++++++++++++++++++++++++++++++++++++
         if (impuestos.size() > 0)
           {
+            // Cabecera ------------
             result += "\n -= Impuestos =-------------------------\n";
             result += "        Producto  Impuesto     Total con impuesto\n";
             Double subTotalImpuesto = 0.0;
@@ -98,10 +96,12 @@ public class Factura {
                 
                 subTotalImpuesto += next.getTotal();
               }
-            
+
+            // SubTotal --------------------------------------  
             result += "\nTOTAL ----> " + String.format("%20.2f", subTotalImpuesto);
           }
 
+        // Devolver la salida -----------------------------
         if (detalle.size() == 0)
             return "=== Factura vacia ===";
         else
@@ -113,17 +113,20 @@ public class Factura {
     {
         Boolean found = false;
         
+        // Recorrer los impuestos recogidos del listado ---------------------
         for (Iterator<FacturaImpuestos> iterator = impuestos.iterator(); iterator.hasNext();)
           {
             FacturaImpuestos next = iterator.next();
             
             if (next.getClase().equals(detalle.getArticulo().getClase()))
               {
+                // Incrementar los valores en el impuesto encontrado.
                 next.incTotal(detalle.getTotalImpuesto(), detalle.getCantidad() );
                 found = true;
               }
           }
 
+        // Agregar nuevos impuesto detectado ---------------------
         if (!found)
           {
              impuestos.add( new FacturaImpuestos(detalle.getArticulo().getClase(), 
